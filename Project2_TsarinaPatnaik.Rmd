@@ -1,0 +1,561 @@
+---
+title: "Project2_TsarinaPatnaik"
+author: "Tsarina Patnaik"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+#Setting up libraries for Project 2
+library(readxl) 
+library(rmarkdown)
+library(tidyverse) 
+library(dplyr) 
+library(DT) 
+library(RColorBrewer) 
+library(rio) 
+library(magrittr)
+library(knitr)
+library(ggplot2)
+library(dbplyr) 
+library(psych) 
+library(FSA) 
+library(kableExtra)
+library(devtools)
+
+#Importing the dataset for Project 2
+Data1 <- read_excel("~/Desktop/ALY6010_R_Project/M2Data-1_Project2.xlsx")
+Data2 <- read_excel("~/Desktop/ALY6010_R_Project/M2Data-1_Project2.xlsx", 
+    sheet = "Sheet1")
+Data3 <- read_excel("~/Desktop/ALY6010_R_Project/M2Data-1_Project2.xlsx", 
+    sheet = "pets", col_names = FALSE)
+```
+<P><BR>
+<CENTER>
+<BR>
+
+<FONT size=4, color= "blue">
+<B>ALY6010 Probability and Statistics</B>
+<BR>
+<B>Northeastern University</B>
+<BR>
+Tsarina Patnaik
+<BR>
+Date: 14th November, 2022
+<BR>
+<B>Project 2 Report: Analysis Using confidence Intervals</B>
+<BR>
+Instructor: Dr. Dee Chiluiza, PhD
+</FONT>
+</CENTER>
+
+<P>
+<FONT size=3, color= "red">
+INTRODUCTION </FONT>
+<BR> 
+<B>Importance of Salary Surveys:</B> For organizations, determining the right employee compensation may be the difference between life and death. Compensation data is essential in assisting HR to establish market-level pay rates, budget, and direct the recruitment and retention of top personnel, whether for long-term or short-term planning.
+
+An organization needs to plan and manage total rewards practices expenses more carefully when there is uncertainty. Underpaying employees as well as problems with turnover and retention are reduced when compensation data from salary surveys is incorporated into a regular review of an organization's pay. A stronger financial situation is caused by overpaying, which can be reduced with the aid of useful compensation data.
+
+<BR><B> Confidence Intervals: </B> Because the figure is based on a sample of the population you are investigating, there is always uncertainty when you generate an estimate in statistics, whether it be a summary statistic or a test statistic.
+
+The confidence interval is the range of values that, if you repeated your experiment or resampled the population in the same manner, you would anticipate your estimate to fall inside a specific proportion of the time.
+
+The alpha value determines the confidence level, which is the proportion of times you anticipate being able to reproduce an estimate between the upper and lower bounds of the confidence interval.
+<BR>
+<BR>
+<B> Confidence intervals in the Medical Industry:</B> A book published in the BMJ in 2000 (1) brought out plainly the significance of include confidence intervals (CI) for effect measures when publishing the findings of clinical and epidemiological studies, as opposed to only the findings of statistical tests. However, it appears that medical professionals are more familiar with formal statistical testing and statistical significance than they are with the practical relevance of the location and magnitude (as well as other aspects) of the effect measure.
+<BR>
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.1 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Confidence Interval 1:
+</FONT>
+<BR> 
+<B>Description:</B>
+<BR>
+In this task, have taken the data set as 1 and then calculated the confdence intervals at 90, 92 and 96 percents.
+```{r message=FALSE, warning=FALSE}
+#Task 1.1
+#Finding the Grand mean, ie. the combined mean of the sum of all values of the datset
+grand_mean = mean(Data2$Salary)
+#n is the total number of values in the dataset
+n = 247
+#Finding the Grand SD, ie. the combined SD of all values of the datset
+grand_sd = sd(Data2$Salary)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Finding confidence interval at 90%
+CI90=0.90
+margin_error90 = qnorm((1-CI90)/2)*(grand_sd/sqrt(n))
+
+a_90= 1-CI90
+L_90= a_90/2
+R_90 = 1-L_90
+LZcritical94=qnorm(L_90)
+RZcritical94=qnorm(R_90)
+
+lower_limit90 = grand_mean - margin_error90
+upper_limit90 = grand_mean + margin_error90
+width90 = upper_limit90 - lower_limit90
+
+# Finding confidence interval at 92%
+CI92=0.92
+margin_error92 = qnorm((1-CI92)/2)*(grand_sd/sqrt(n))
+
+a_92= 1-CI92
+L_92= a_92/2
+R_92 = 1-L_92
+LZcritical94=qnorm(L_92)
+RZcritical94=qnorm(R_92)
+
+lower_limit92 = grand_mean - margin_error92
+upper_limit92 = grand_mean + margin_error92
+width92 = upper_limit92 - lower_limit92
+
+# Finding confidence interval at 96%
+CI96=0.96
+margin_error96 = qnorm((1-CI96)/2)*(grand_sd/sqrt(n))
+
+a_96= 1-CI96
+L_96= a_96/2
+R_96 = 1-L_92
+LZcritical96=qnorm(L_96)
+RZcritical96=qnorm(R_96)
+
+lower_limit96 = grand_mean - margin_error96
+upper_limit96 = grand_mean + margin_error96
+width96 = upper_limit96 - lower_limit96
+
+#Creating a Table for all the parameters
+confidence_level = c(CI90, CI92, CI96)
+margin_error = c(margin_error90, margin_error92, margin_error96)
+lower_limit = c(lower_limit90, lower_limit92, lower_limit96)
+upper_limit = c(upper_limit90, upper_limit92, upper_limit96)
+width = c(width90, width92, width96)
+
+table_basic = matrix(c(confidence_level, margin_error, lower_limit, upper_limit, width), ncol=5, byrow= FALSE)
+colnames(table_basic)= c("CL", "Margin Error", "Lower Limit", "Upper Limit", "width")
+
+table_basic= as.table(table_basic)
+
+knitr::kable(as.data.frame(names(table_basic)),
+             format = "html", 
+             main = "Table 1.1",
+             align = 'c',
+             round(table_basic,2),
+             table.attr = "style='width:80%;'")
+table_basic %>%
+  kbl() %>%
+  kable_styling()
+```
+
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.2 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Confidence Interval 2:
+</FONT>
+<BR> 
+<B>Description:</B>
+<BR>
+In this task, we have calculated the mean and Sd for each store and then used the average to calculate the confidence levels at 90, 92 and 96 percents.
+```{r Task 1.2, message=FALSE, warning=FALSE}
+mean_store1 = mean(Data1$`Store 1`, na.rm = TRUE)
+sd_store1 = sd(Data1$`Store 1`, na.rm = TRUE)
+
+mean_store2 = mean(Data1$`Store 2`, na.rm = TRUE)
+sd_store2 = sd(Data1$`Store 2`, na.rm = TRUE)
+
+mean_store3 = mean(Data1$`Store 3`, na.rm = TRUE)
+sd_store3 = sd(Data1$`Store 3`, na.rm = TRUE)
+
+mean_store4 = mean(Data1$`Store 4`, na.rm = TRUE)
+sd_store4 = sd(Data1$`Store 4`, na.rm = TRUE)
+
+mean_store5 = mean(Data1$`Store 5`, na.rm = TRUE)
+sd_store5 = sd(Data1$`Store 5`, na.rm = TRUE)
+
+mean_store6 = mean(Data1$`Store 6`, na.rm = TRUE)
+sd_store6 = sd(Data1$`Store 6`, na.rm = TRUE)
+
+mean_store7 = mean(Data1$`Store 7`, na.rm = TRUE)
+sd_store7 = sd(Data1$`Store 7`, na.rm = TRUE)
+
+mean_store8 = mean(Data1$`Store 8`, na.rm = TRUE)
+sd_store8 = sd(Data1$`Store 8`, na.rm = TRUE)
+
+mean_store9 = mean(Data1$`Store 9`, na.rm = TRUE)
+sd_store9 = sd(Data1$`Store 9`, na.rm = TRUE)
+
+mean_store10 = mean(Data1$`Store 10`, na.rm = TRUE)
+sd_store10 = sd(Data1$`Store 10`, na.rm = TRUE)
+
+mean_store11 = mean(Data1$`Store 11`, na.rm = TRUE)
+sd_store11 = sd(Data1$`Store 11`, na.rm = TRUE)
+
+mean_store12 = mean(Data1$`Store 12`, na.rm = TRUE)
+sd_store12 = sd(Data1$`Store 12`, na.rm = TRUE)
+
+mean_store13 = mean(Data1$`Store 13`, na.rm = TRUE)
+sd_store13 = sd(Data1$`Store 13`, na.rm = TRUE)
+
+mean_store14 = mean(Data1$`Store 14`, na.rm = TRUE)
+sd_store14 = sd(Data1$`Store 14`, na.rm = TRUE)
+
+mean_store15 = mean(Data1$`Store 15`, na.rm = TRUE)
+sd_store15 = sd(Data1$`Store 15`, na.rm = TRUE)
+
+mean_store16 = mean(Data1$`Store 16`, na.rm = TRUE)
+sd_store16 = sd(Data1$`Store 16`, na.rm = TRUE)
+
+mean_store17 = mean(Data1$`Store 17`, na.rm = TRUE)
+sd_store17 = sd(Data1$`Store 17`, na.rm = TRUE)
+
+mean_store18 = mean(Data1$`Store 18`, na.rm = TRUE)
+sd_store18 = sd(Data1$`Store 18`, na.rm = TRUE)
+
+mean_store19 = mean(Data1$`Store 19`, na.rm = TRUE)
+sd_store19 = sd(Data1$`Store 19`, na.rm = TRUE)
+
+mean_store20 = mean(Data1$`Store 20`, na.rm = TRUE)
+sd_store20 = sd(Data1$`Store 20`, na.rm = TRUE)
+
+grand_mean2 = mean(c(mean_store1, mean_store2, mean_store3, mean_store4, mean_store5, mean_store6, mean_store7, mean_store8, mean_store9, mean_store10, mean_store11, mean_store12, mean_store13, mean_store14, mean_store15, mean_store16, mean_store17, mean_store18, mean_store19, mean_store20))
+
+grand_sd2 = sd(c(sd_store1, sd_store2, sd_store3, sd_store4, sd_store5, sd_store6, sd_store7, sd_store8, sd_store9, sd_store10, sd_store11, sd_store12, sd_store13, sd_store14, sd_store15, sd_store16, sd_store17, sd_store18, sd_store19, sd_store20))
+
+#Calculating the Confidence Intervals
+n2 = 20
+df = n2 - 1
+# CI at 90%
+t90 = qt((1-CI90)/2,n2-1)
+E290 = qt((1-CI90)/2,n2-1)*(grand_sd2/sqrt(n2))
+lower_limit90t = grand_mean2 - E290
+upper_limit90t = grand_mean2 + E290
+width90t = upper_limit90t - lower_limit90t
+# CI at 92
+t92 = qt((1-CI92)/2,n2-1)
+E292 = qt((1-CI92)/2,n2-1)*(grand_sd2/sqrt(n2))
+lower_limit92t = grand_mean2 - E292
+upper_limit92t = grand_mean2 + E292
+width92t = upper_limit92t - lower_limit92t
+# CI at 96
+t96 = qt((1-CI96)/2,n2-1)
+E296 = qt((1-CI96)/2,n2-1)*(grand_sd2/sqrt(n2))
+lower_limit96t = grand_mean2 - E296
+upper_limit96t = grand_mean2 + E296
+width96t = upper_limit96t - lower_limit96t
+
+#Formulating the table
+confidence_level_t = c(CI90, CI92, CI96)
+tc = c(t90, t92, t96)
+margin_error_t = c(E290, E292, E296)
+lower_limit_t = c(lower_limit90t, lower_limit92t, lower_limit96t)
+upper_limit_t = c(upper_limit90t, upper_limit92t, upper_limit96t)
+width_t = c(width90t, width92t, width96t)
+
+table_basic_t = matrix(c(confidence_level_t, tc, margin_error_t, lower_limit_t, upper_limit_t, width_t), ncol=6, byrow= FALSE)
+colnames(table_basic_t)= c("CL", "Tc", "Margin Error", "Lower Limit", "Upper Limit", "width")
+
+table_basic_t = as.table(table_basic_t)
+
+knitr::kable(as.data.frame(names(table_basic_t)),
+             format = "html", 
+             main = "Table 1.1",
+             align = 'c',
+             round(table_basic_t,2),
+             table.attr = "style='width:60%;'")
+table_basic_t %>%
+  kbl() %>%
+  kable_styling()
+```
+
+
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.3 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Observations from Task 1.1 and Task 1.2:
+</FONT>
+<BR>
+From the above performed tasks 1.1 and 1.2, I learnt how tot calculate the grand mean of the whole data set and then find the confidence intervals considering the whole dataset as one. In the task 1.1 as well as task 1.2, I have populated a table with all the values, including the margin_error, upper limit etc. We can see from the confidence intervals above that the range decreases as the confidence level rises. I believe this is the case because, in order to cover the mean, a range needs to be wider the more certain you are that you are correct. The confidence values calculated in the above tables are for 90, 92 and 96 percent confidence level.
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.4 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Observations from Task 1.1 and Task 1.2:
+</FONT>
+<BR>
+In this task, I have plotted the density fuction curve for the values found in Table 1.1
+```{r message=FALSE, warning=FALSE}
+plot1=plot(density(table_basic),
+           main = "Fig.1.4 Density Plot for Table 1.1",
+           las=1,
+           adjust = 4)
+# Plotting line for mean, and CI
+abline(v = grand_mean,                        
+       col = "black",
+       lty=1,
+       lwd = 1)
+abline(v = CI90, 
+       col = "darkgreen",
+       lty=2,
+       lwd = 1)
+abline(v = lower_limit90, 
+       col = "yellow",
+       lty=2,
+       lwd = 1)
+abline(v = upper_limit90, 
+       col = "yellow",
+       lty=4,
+       lwd = 1)
+abline(v = CI92, 
+       col = "red",
+       lty=3,
+       lwd = 1)
+abline(v = lower_limit92, 
+       col = "blue",
+       lty=3,
+       lwd = 1)
+abline(v = upper_limit92, 
+       col = "blue",
+       lty=4,
+       lwd = 1)
+abline(v = CI96, 
+       col = "orange",
+       lty=4,
+       lwd = 1)
+abline(v = lower_limit96, 
+       col = "purple",
+       lty=4,
+       lwd = 1)
+abline(v = upper_limit96, 
+       col = "purple",
+       lty=4,
+       lwd = 1)
+
+# Adding a legend
+legend(x = "topright",          
+       legend = c("90%", "92%","96%"),
+       lty = c(2,3,4),           
+       col = c("darkgreen","red","orange"),       
+       lwd = 1)
+
+
+#adding text to the labels
+
+text(x = grand_mean-0.25,                   
+     y = 0.04,
+     srt=90,
+     paste("Mean=", round(grand_mean,digits =2)),
+     col = "black",
+     cex = 0.7)
+text(x = CI90-0.50,                   
+     y = 0,
+     paste(round(CI90,digits = 2)),
+     col = "darkgreen",
+     cex = 0.6)
+text(x = lower_limit90+0.50,                   
+     y = 0,
+     paste(round(lower_limit90,digits = 2)),
+     col = "darkgreen",
+     cex = 0.6)
+text(x = upper_limit90-0.45,                   
+     y = 0.02,
+     paste(round(upper_limit90,digits = 2)),
+     col = "red",
+     cex = 0.6)
+text(x = CI92+0.50,                   
+     y = 0.02,
+     paste(round(CI92,digits = 2)),
+     col = "red",
+     cex = 0.6)
+text(x = lower_limit92+0.50,                   
+     y = 0.03,
+     paste(round(lower_limit92,digits = 2)),
+     col = "blue",
+     cex = 0.6)
+text(x = upper_limit92-0.50,                   
+     y = 0.03,
+     paste(round(upper_limit92,digits = 2)),
+     col = "blue",
+     cex = 0.6)
+text(x = CI96+0.50,                   
+     y = 0.02,
+     paste(round(CI96,digits = 2)),
+     col = "red",
+     cex = 0.6)
+text(x = lower_limit96+0.50,                   
+     y = 0.03,
+     paste(round(lower_limit96,digits = 2)),
+     col = "blue",
+     cex = 0.6)
+text(x = upper_limit96-0.50,                   
+     y = 0.03,
+     paste(round(upper_limit96,digits = 2)),
+     col = "blue",
+     cex = 0.6)
+
+```
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.5 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Boxplot for Task 2:
+</FONT>
+<BR>
+In this task, we have to plot a boxplot for the stats found using the function boxplot.stats(). The same has been presented below:
+
+```{r message=FALSE, warning=FALSE}
+stat1 = round(boxplot.stats(Data1$`Store 1`)$stats, digits = 1)
+stat2 = round(boxplot.stats(Data1$`Store 2`)$stats, digits = 1)
+stat3 = round(boxplot.stats(Data1$`Store 3`)$stats, digits = 1)
+stat4 = round(boxplot.stats(Data1$`Store 4`)$stats, digits = 1)
+stat5 = round(boxplot.stats(Data1$`Store 5`)$stats, digits = 1)
+stat6 = round(boxplot.stats(Data1$`Store 6`)$stats, digits = 1)
+stat7 = round(boxplot.stats(Data1$`Store 7`)$stats, digits = 1)
+stat8 = round(boxplot.stats(Data1$`Store 8`)$stats, digits = 1)
+stat9 = round(boxplot.stats(Data1$`Store 9`)$stats, digits = 1)
+stat10 = round(boxplot.stats(Data1$`Store 10`)$stats, digits = 1)
+stat11 = round(boxplot.stats(Data1$`Store 11`)$stats, digits = 1)
+stat12 = round(boxplot.stats(Data1$`Store 12`)$stats, digits = 1)
+stat13 = round(boxplot.stats(Data1$`Store 13`)$stats, digits = 1)
+stat14 = round(boxplot.stats(Data1$`Store 14`)$stats, digits = 1)
+stat15 = round(boxplot.stats(Data1$`Store 15`)$stats, digits = 1)
+stat16 = round(boxplot.stats(Data1$`Store 16`)$stats, digits = 1)
+stat17 = round(boxplot.stats(Data1$`Store 17`)$stats, digits = 1)
+stat18 = round(boxplot.stats(Data1$`Store 18`)$stats, digits = 1)
+stat19 = round(boxplot.stats(Data1$`Store 19`)$stats, digits = 1)
+stat20 = round(boxplot.stats(Data1$`Store 20`)$stats, digits = 1)
+
+store_stats = c(stat1, stat2, stat3, stat4, stat5, stat6, stat7, stat8, stat9, stat10, stat11, stat12, stat13, stat14, stat15, stat16, stat17, stat18, stat19, stat20)
+
+plot_lables = rbind(stat1, stat2, stat3, stat4, stat5, stat6, stat7, stat8, stat9, stat10, stat11, stat12, stat13, stat14, stat15, stat16, stat17, stat18, stat19, stat20)
+
+boxplot(Data1, 
+        las=2, 
+        col=terrain.colors(8), 
+        boxwex = 0.2, 
+        main = "Fig.1.5 Boxplot for all 20 stores in the dataset",
+        labels = plot_lables, 
+        cex = 0.6)
+
+text(y=plot_lables , labels = plot_lables, x = c(0.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5) , cex=0.4)
+mean_boxplot = colMeans(Data1, na.rm = TRUE)
+points(mean_boxplot, col="red", pch=20.01)
+```
+<P>
+<FONT size=3, color= "purple">
+<B>Task 1.6 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Observations from task 1.4 and 1.5:
+</FONT>
+<BR>
+From the Task 1.4, I have plotted the density curves using the codes density() and plot() for the table 1.1. Through the plotting, I learnt how to plot all the relating lines in the curve like for the mean, upper limit, lower limit etc. for all the confidence levels. As for the task 1.5, I created a store_stats vector for all the stores using the boxplot.stats() and then created labels for the same. Then I used these two, to plot my boxplot which has been presented above, in the fig.1.5. The grand mean can be seen at 11.83 and the Sd at 0.50, with the store 7 values showing as least wide in range and the store 20 as most. Through the boxplot, the outliers can be easily seen, and the skewness can be predicted to see the trend in values.
+
+<P>
+<FONT size=3, color= "purple">
+<B>Task 2.1 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Confidence Intervals for the Pets dataset:
+</FONT>
+<BR>
+In this task, I have found the confidence intervals for the pets dataset from the sheet 2 of the given dataset.
+```{r message=FALSE, warning=FALSE}
+#Task 2.1
+
+#calculating the total number of Yes and No values in the dataset
+count_yes = sum(Data3 == "Yes")
+count_no = sum(Data3 == "No")
+total_count = count_yes + count_no
+
+#90
+CI90_data3 = prop.test(count_yes, total_count, conf.level = 0.90)
+#92
+CI92_data3 = prop.test(count_yes, total_count, conf.level = 0.92)
+#96
+CI96_data3 = prop.test(count_yes, total_count, conf.level = 0.96)
+
+```
+<P>
+<FONT size=3, color= "purple">
+<B>Task 2.2 </B> </FONT>
+<BR>
+<FONT size=3, color= "blue">
+Plotting Barplot and PieChart for the responses
+</FONT>
+<BR>
+From the Task 2.1, I have plotted the responses on a barplot and the pie chart to observe the responses in a more visual manner.
+```{r message=FALSE, warning=FALSE}
+#Creating a vector to stor the count values
+vector = c(count_yes, count_no)
+#Barplot
+barplot(vector, 
+                 main="Fig.2.2.a Barplot presenting frequencies for response",
+                 xlab="Yes/No",
+                 ylab = "Counts",
+                 align = "c",
+                 col = terrain.colors(8),
+                 ylim = c(0,105),
+                 border = "purple",
+                 las = 1,
+                 cex.axis = 1.1,
+                 cex.names = 1.1)
+#PieChart
+pie(vector,
+    main="Fig.2.2.b Pie Chart presenting frequencies for response",
+    radius = 1,
+    labels = c("Yes", "No"),
+    col = terrain.colors(3),
+    border = "black",
+    cex=0.5,
+    font = 1.5,
+    )
+
+legend("bottomright",
+       legend = paste(unique(sort(vector)), "Counts"),
+       fill = terrain.colors(3),
+       border = "white")
+```
+<P>
+<FONT size=3, color= "red">
+CONCLUSION
+</FONT>
+<BR>
+Through the above performed projcet, following are the points I learnt that I would like to summazrise:
+<BR>
+1. I learnt how to import multiple sheets from the same dataset in R and then how to perform analysis on the same.
+<BR>
+2. I learnt how  to calculate the confidence intervals of an individual parameter as well as the whole dataset, when considering it as one, and thereby plotting a density curve for the same for make meaningful observations from the data
+<BR>
+3. I also learn hor to manipulate a dataset with polling results such as a Yes/No dataset in this case, and then finding the confidence levels for the same.
+<P>
+<FONT size=3, color= "red">
+APPENDIX:
+</FONT>
+<BR>
+A R Markdown file has also been attached along with the report under the name of <FONT color = "blue"> "Project2_TsarinaPatnaik" </FONT>
+
+<P>
+<FONT size=3, color= "red">
+<P>
+REFERENCES
+</FONT>
+<BR>
+1. Chiluiza, D. <i> https://rpubs.com/Dee_Chiluiza/816756 </i>, retrieved on 14th November, 2022
+<BR>
+2. Zack. September 28, 2020. <i> How to Perform a COUNTIF Function in R. Statology.</i> https://www.statology.org/countif-r/retrieved on 14th November, 2022
+<BR>
+3. B. Rebecca, August 7, 2020, <i>Understanding Confidence Intervals | Easy Examples & Formulas </i> https://www.scribbr.com/statistics/confidence-interval/ 14th November, 2022
+<BR>
+4. T. Archie, August 29, 2018 <i> The Importance of Salary Survey Data</i> https://www.archbright.com/blog/the-importance-of-salary-survey-data#:~:text=Incorporating%20compensation%20data%20from%20salary,in%20a%20weaker%20financial%20state.retrieved on 14th November, 2022
